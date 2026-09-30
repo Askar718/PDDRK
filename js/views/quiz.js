@@ -176,7 +176,7 @@ export function quizView({ data, store, navigate }) {
 
     return `
       <div class="question-head">
-        <p class="question-count">${t('quiz.question', { i: session.current + 1, n: total })}</p>
+        <p class="question-count">${t('quiz.question', { i: session.current + 1, n: total })}${q.generated ? ` <span class="gen-badge" title="${esc(t('quiz.generatedHint'))}">${t('quiz.generated')}</span>` : ''}</p>
         <button type="button" class="icon-btn fav-btn" data-action="fav" aria-pressed="${isFav}" aria-label="${esc(favLabel)}" title="${esc(favLabel)}">${icon('star', { filled: isFav })}</button>
       </div>
       ${q.illustration ? `<figure class="question-figure">${renderIllustration(q.illustration, t('quiz.illustration'))}</figure>` : ''}

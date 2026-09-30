@@ -85,3 +85,16 @@ test('таймер и поиск следующего неотвеченного
   session.answers.q2 = 'a';
   assert.equal(nextUnanswered(session), -1);
 });
+
+test('экзамен набирает вопросы равномерно по темам', () => {
+  const many = [
+    ...Array.from({ length: 100 }, (_, i) => ({ id: `big${i}`, topic: 'big' })),
+    ...Array.from({ length: 10 }, (_, i) => ({ id: `s1-${i}`, topic: 's1' })),
+    ...Array.from({ length: 10 }, (_, i) => ({ id: `s2-${i}`, topic: 's2' })),
+  ];
+  const ids = buildQuestionSet('exam', { questions: many, examCount: 30, rng: seeded(5) });
+  assert.equal(ids.length, 30);
+  assert.equal(new Set(ids).size, 30);
+  assert.equal(ids.filter((id) => id.startsWith('s1')).length, 10);
+  assert.equal(ids.filter((id) => id.startsWith('big')).length, 10);
+});

@@ -1,4 +1,4 @@
-import { loadData, validateData } from './lib/data.mjs';
+import { loadAllData as loadData, validateData } from './lib/data.mjs';
 
 const data = await loadData();
 const errors = validateData(data);
@@ -8,4 +8,5 @@ if (errors.length) {
   process.exit(1);
 }
 const items = data.rules.reduce((n, s) => n + s.items.length, 0);
-console.log(`OK: тем ${data.topics.length}, разделов ${data.rules.length}, пунктов ${items}, вопросов ${data.questions.length}`);
+const generated = data.questions.filter((q) => q.generated).length;
+console.log(`OK: тем ${data.topics.length}, разделов ${data.rules.length}, пунктов ${items}, вопросов ${data.questions.length} (из них сгенерировано ${generated})`);

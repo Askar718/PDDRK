@@ -23,8 +23,22 @@ export function mistakeIds(questions, stats) {
  */
 export function buildQuestionSet(mode, { questions, stats = {}, favorites = [], topicId = null, examCount = 40, rng = Math.random }) {
   switch (mode) {
-    case 'exam':
-      return shuffle(questions.map((q) => q.id), rng).slice(0, examCount);
+    case 'exam': {
+      // Равномерно по темам: по кругу берём по одному случайному вопросу из каждой темы.
+      const byTopic = new Map();
+      for (const q of shuffle(questions, rng)) {
+        if (!byTopic.has(q.topic)) byTopic.set(q.topic, []);
+        byTopic.get(q.topic).push(q.id);
+      }
+      const pools = shuffle([...byTopic.values()], rng);
+      const picked = [];
+      while (picked.length < examCount && pools.some((p) => p.length)) {
+        for (const pool of pools) {
+          if (pool.length && picked.length < examCount) picked.push(pool.pop());
+        }
+      }
+      return shuffle(picked, rng);
+    }
     case 'topic':
       return shuffle(questions.filter((q) => q.topic === topicId).map((q) => q.id), rng);
     case 'marathon':

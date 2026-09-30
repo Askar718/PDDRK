@@ -100,6 +100,40 @@ function signSvg(kind, value) {
       return `<rect x="10" y="50" width="180" height="100" rx="8" fill="#fff" stroke="#111" stroke-width="4"/>
         <g fill="#111"><rect x="36" y="96" width="22" height="36"/><rect x="62" y="80" width="18" height="52"/>
         <rect x="84" y="70" width="24" height="62"/><path d="M112 132 v-36 l14 -12 l14 12 v36 z"/><rect x="144" y="90" width="22" height="42"/></g>`;
+    case 'end-priority':
+      return `<rect x="42" y="42" width="116" height="116" transform="rotate(45 100 100)" fill="#fff" stroke="#222" stroke-width="2"/>
+        <rect x="62" y="62" width="76" height="76" transform="rotate(45 100 100)" fill="${YELLOW}"/>
+        <g stroke="#222" stroke-width="5"><path d="M58 142 L142 58"/><path d="M66 150 L150 66"/><path d="M50 134 L134 50"/></g>`;
+    case 'no-entry':
+      return `<circle cx="100" cy="100" r="92" fill="${RED}"/><rect x="36" y="86" width="128" height="28" fill="#fff"/>`;
+    case 'oncoming-priority':
+      return `<circle cx="100" cy="100" r="88" fill="#fff" stroke="${RED}" stroke-width="18"/>
+        <path d="M78 150 V70 M62 86 L78 62 L94 86" stroke="#111" stroke-width="10" fill="none" stroke-linejoin="round"/>
+        <path d="M122 50 V130 M106 114 L122 138 L138 114" stroke="${RED}" stroke-width="10" fill="none" stroke-linejoin="round"/>`;
+    case 'over-oncoming':
+      return `<rect x="16" y="16" width="168" height="168" rx="12" fill="${BLUE}" stroke="#fff" stroke-width="6"/>
+        <path d="M78 156 V70 M62 86 L78 62 L94 86" stroke="#fff" stroke-width="10" fill="none" stroke-linejoin="round"/>
+        <path d="M122 44 V130 M106 114 L122 138 L138 114" stroke="${RED}" stroke-width="10" fill="none" stroke-linejoin="round"/>`;
+    case 'straight-only':
+      return `<circle cx="100" cy="100" r="90" fill="${BLUE}" stroke="#fff" stroke-width="5"/>
+        <path d="M100 162 V56 M68 84 L100 44 L132 84 Z" stroke="#fff" stroke-width="18" fill="#fff" stroke-linejoin="round"/>`;
+    case 'right-only':
+      return `<circle cx="100" cy="100" r="90" fill="${BLUE}" stroke="#fff" stroke-width="5"/>
+        <path d="M76 160 V112 Q76 92 96 92 H128" stroke="#fff" stroke-width="18" fill="none"/>
+        <path d="M124 64 L164 92 L124 120 Z" fill="#fff"/>`;
+    case 'one-way':
+      return `<rect x="16" y="16" width="168" height="168" rx="12" fill="${BLUE}" stroke="#fff" stroke-width="6"/>
+        <path d="M100 166 V74" stroke="#fff" stroke-width="22"/><path d="M62 88 L100 34 L138 88 Z" fill="#fff"/>`;
+    case 'parking':
+      return `<rect x="16" y="16" width="168" height="168" rx="12" fill="${BLUE}" stroke="#fff" stroke-width="6"/>
+        <text x="100" y="146" text-anchor="middle" font-size="130" font-weight="800" fill="#fff" font-family="Arial, sans-serif">P</text>`;
+    case 'equal-crossing':
+      return `<path d="M100 18 L186 170 H14 Z" fill="#fff" stroke="${RED}" stroke-width="14" stroke-linejoin="round"/>
+        <path d="M72 88 L128 152 M128 88 L72 152" stroke="#111" stroke-width="14"/>`;
+    case 'lights-ahead':
+      return `<path d="M100 18 L186 170 H14 Z" fill="#fff" stroke="${RED}" stroke-width="14" stroke-linejoin="round"/>
+        <rect x="84" y="70" width="32" height="86" rx="8" fill="#111"/>
+        <circle cx="100" cy="85" r="9" fill="${RED}"/><circle cx="100" cy="113" r="9" fill="${YELLOW}"/><circle cx="100" cy="141" r="9" fill="#2fb36b"/>`;
     case 'crosswalk':
       return `<rect x="14" y="14" width="172" height="172" rx="14" fill="${BLUE}" stroke="#fff" stroke-width="6"/>
         <path d="M100 30 L172 164 H28 Z" fill="#fff"/>
@@ -135,7 +169,7 @@ function renderLight({ state }) {
   const on = {
     red: state === 'red' || state === 'red-yellow' || state === 'red-arrow-right',
     yellow: state === 'yellow' || state === 'red-yellow' || state === 'yellow-flash',
-    green: state === 'green',
+    green: state === 'green' || state === 'green-flash',
   };
   const lamp = (cy, color, lit, blink = false) =>
     `<circle cx="80" cy="${cy}" r="28" fill="${lit ? color : '#2b2f36'}" ${lit ? `class="il-lit${blink ? ' il-blink' : ''}" style="--glow:${color}"` : ''} stroke="#15181c" stroke-width="3"/>`;
@@ -149,7 +183,7 @@ function renderLight({ state }) {
     viewBox: '0 0 220 240',
     className: 'il-light',
     body: `<rect x="40" y="10" width="80" height="220" rx="16" fill="#1f2328"/>
-      ${lamp(55, '#ff3b30', on.red)}${lamp(120, '#ffc400', on.yellow, state === 'yellow-flash')}${lamp(185, '#2fd07a', on.green)}
+      ${lamp(55, '#ff3b30', on.red)}${lamp(120, '#ffc400', on.yellow, state === 'yellow-flash')}${lamp(185, '#2fd07a', on.green, state === 'green-flash')}
       ${extra}`,
   };
 }
@@ -281,12 +315,14 @@ function renderStop({ object, distance }) {
       <g transform="translate(290 150)"><rect x="-2" y="-30" width="4" height="34" class="il-post"/>
       <rect x="-14" y="-52" width="28" height="24" rx="3" fill="${BLUE}"/>
       <path d="M-8 -34 v-12 h16 v12 z M-6 -42 h12" stroke="#fff" stroke-width="2" fill="none"/></g>`;
-    body += car(170, 118, 90, 'blue');
-    body += dimension(192, 286, 58, `${distance} м`);
+    const gap = Math.min(Math.max(distance * 8, 24), 240);
+    body += car(286 - gap - 22, 118, 90, 'blue');
+    body += dimension(286 - gap, 286, 58, `${distance} м`);
   } else {
     const stripes = Array.from({ length: 6 }, (_, i) => `<rect x="300" y="${36 + i * 18}" width="44" height="10" class="il-zebra"/>`).join('');
-    body += stripes + car(225, 118, 90, 'blue');
-    body += dimension(247, 300, 58, `${distance} м`);
+    const gap = Math.min(Math.max(distance * 12, 24), 250);
+    body += stripes + car(300 - gap - 22, 118, 90, 'blue');
+    body += dimension(300 - gap, 300, 58, `${distance} м`);
     body += pedestrian(322, 162);
   }
   return { viewBox: '0 0 400 200', body, className: 'il-scene' };
@@ -318,15 +354,16 @@ function renderCrosswalk({ pedestrian: kind = 'entering' }) {
 // Знак аварийной остановки (viewBox 0 0 400 180)
 // ---------------------------------------------------------------------------
 
-function renderTriangle({ distance = 30 }) {
+function renderTriangle({ distance = 30, exact = false }) {
+  const tx = 308 - Math.min(Math.max(distance * 6, 40), 250);
   const body = `<rect width="400" height="180" class="il-ground"/>
     <rect x="0" y="30" width="400" height="110" class="il-road"/>
     <path d="M0 85 H400" class="il-line" stroke-dasharray="22 16"/>
     <path d="M0 136 H400" class="il-edge"/>
     ${car(330, 112, 90, 'blue', { hazard: true })}
-    <g transform="translate(70 124)"><path d="M0 -20 L17 10 H-17 Z" fill="none" stroke="${RED}" stroke-width="5" stroke-linejoin="round"/>
+    <g transform="translate(${tx} 124)"><path d="M0 -20 L17 10 H-17 Z" fill="none" stroke="${RED}" stroke-width="5" stroke-linejoin="round"/>
     <path d="M0 -9 L8 5 H-8 Z" fill="#ffb300" opacity=".7"/></g>
-    ${dimension(70, 306, 162, `≥ ${distance} м`)}`;
+    ${dimension(tx, 306, 162, `${exact ? '' : '≥ '}${distance} м`)}`;
   return { viewBox: '0 0 400 180', body, className: 'il-scene' };
 }
 

@@ -2,7 +2,7 @@
 // Запуск: npm run build:seed
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { loadData, validateData, ROOT } from './lib/data.mjs';
+import { loadAllData as loadData, validateData, ROOT } from './lib/data.mjs';
 
 const q = (v) => (v === null || v === undefined ? 'NULL' : `'${String(v).replace(/'/g, "''")}'`);
 const b = (v) => (v ? 'TRUE' : 'FALSE');

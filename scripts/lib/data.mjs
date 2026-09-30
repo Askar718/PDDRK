@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { generateQuestions } from '../../js/generator.js';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -16,6 +17,12 @@ export async function loadData() {
     readJson('questions.json'),
   ]);
   return { meta, topics, rules, questions };
+}
+
+/** Авторские и сгенерированные вопросы вместе — так их видит сайт. */
+export async function loadAllData() {
+  const data = await loadData();
+  return { ...data, questions: [...data.questions, ...generateQuestions()] };
 }
 
 const ILLUSTRATION_TYPES = new Set(['sign', 'light', 'intersection', 'road', 'stop', 'crosswalk', 'triangle']);

@@ -108,6 +108,8 @@ const STRINGS = {
     'quiz.answered': 'Отвечено: {a} из {n}',
     'quiz.keys': 'Клавиши: 1–4 — выбор ответа, Enter — дальше',
     'quiz.illustration': 'Иллюстрация к вопросу',
+    'quiz.generated': 'шаблон',
+    'quiz.generatedHint': 'Вопрос создан генератором: правильный ответ вычислен по правилам ПДД',
 
     'result.title': 'Результат',
     'result.passed': 'Учебный экзамен сдан',
@@ -287,6 +289,8 @@ const STRINGS = {
     'quiz.answered': 'Жауап берілді: {a} / {n}',
     'quiz.keys': 'Пернелер: 1–4 — жауапты таңдау, Enter — әрі қарай',
     'quiz.illustration': 'Сұраққа иллюстрация',
+    'quiz.generated': 'үлгі',
+    'quiz.generatedHint': 'Сұрақты генератор құрды: дұрыс жауап ЖҚЕ бойынша есептелген',
 
     'result.title': 'Нәтиже',
     'result.passed': 'Оқу емтиханы тапсырылды',

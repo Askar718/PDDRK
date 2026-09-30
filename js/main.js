@@ -1,6 +1,7 @@
 import { setLang, getLang, t, LANGS } from './i18n.js';
 import { createStore } from './store.js';
 import { icon, esc } from './ui.js';
+import { generateQuestions } from './generator.js';
 import { homeView } from './views/home.js';
 import { rulesView } from './views/rules.js';
 import { testsView } from './views/tests.js';
@@ -22,7 +23,9 @@ async function loadData() {
     if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
     return res.json();
   };
-  const [meta, topics, rules, questions] = await Promise.all(['meta', 'topics', 'rules', 'questions'].map(get));
+  const [meta, topics, rules, authored] = await Promise.all(['meta', 'topics', 'rules', 'questions'].map(get));
+  // Авторские вопросы + сгенерированные по шаблонам (js/generator.js).
+  const questions = [...authored, ...generateQuestions()];
   topics.sort((a, b) => a.order - b.order);
   const ruleItemById = new Map();
   for (const section of rules) for (const item of section.items) ruleItemById.set(item.id, { item, section });

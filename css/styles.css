@@ -1395,6 +1395,18 @@ mark {
   }
 }
 
+.gen-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
 /* ------------------------------------------------------------------ Результат */
 
 .result {
@@ -1847,7 +1859,7 @@ details p {
   filter: drop-shadow(0 0 8px var(--glow));
 }
 .illustration circle.il-blink.il-lit {
-  fill: #ffc400;
+  fill: var(--glow);
 }
 @keyframes il-blink {
   to {
