@@ -32,6 +32,6 @@
   "exam": {
     "questionCount": 40,
     "timeLimitMinutes": 40,
-    "passThreshold": 0.85
+    "passThreshold": 0.8
   }
 }
