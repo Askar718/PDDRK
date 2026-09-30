@@ -1,5 +1,5 @@
 import { t, tr, getLang, formatDuration } from '../i18n.js';
-import { icon, esc, toast } from '../ui.js';
+import { icon, esc, toast, modal } from '../ui.js';
 import { renderIllustration } from '../illustrations.js';
 import {
   buildQuestionSet,
@@ -258,9 +258,12 @@ export function quizView({ data, store, navigate }) {
         }
       };
 
-      const tryFinish = () => {
+      const tryFinish = async () => {
         const left = session.ids.length - answeredCount(session);
-        if (left > 0 && !confirm(t('quiz.finishConfirm'))) return;
+        if (left > 0) {
+          const ok = await modal({ title: t('quiz.finish'), body: t('quiz.finishConfirm'), confirmLabel: t('quiz.finish'), cancelLabel: t('common.cancel') });
+          if (!ok) return;
+        }
         finish();
       };
 
@@ -279,10 +282,15 @@ export function quizView({ data, store, navigate }) {
           toast(t(nowFav ? 'quiz.fav.add' : 'quiz.fav.remove') + ' ✓');
           refresh('[data-action="fav"]');
         } else if (action === 'exit') {
-          if (answeredCount(session) === 0 || confirm(t('quiz.exitConfirm'))) {
+          const leave = () => {
             store.setActiveQuiz(null);
             navigate('#/tests');
-          }
+          };
+          if (answeredCount(session) === 0) leave();
+          else
+            modal({ title: t('quiz.exit'), body: t('quiz.exitConfirm'), confirmLabel: t('quiz.exit'), cancelLabel: t('common.cancel'), danger: true }).then(
+              (ok) => ok && leave(),
+            );
         }
       };
       root.addEventListener('click', onClick);

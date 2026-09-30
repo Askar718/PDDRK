@@ -46,6 +46,47 @@
   color-scheme: light;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --brand: #3cc3e6;
+    --brand-strong: #7fd8ef;
+    --brand-soft: #123444;
+    --accent: #ffcc33;
+    --accent-strong: #ffd966;
+    --accent-ink: #231a00;
+    --road: #0b1117;
+
+    --bg: #0f1720;
+    --surface: #17222d;
+    --surface-2: #1d2a37;
+    --border: #2a3a48;
+    --text: #e6edf3;
+    --muted: #9fb0bf;
+
+    --ok: #4ccf8b;
+    --ok-soft: #133426;
+    --bad: #ff7a70;
+    --bad-soft: #3a1c1a;
+    --mid: #f0b75a;
+    --info-soft: #2e2913;
+
+    --il-ground: #1f3a2b;
+    --il-road: #3b4550;
+    --il-road-main: rgba(255, 204, 51, 0.07);
+    --il-line: #e8edf1;
+    --il-edge: #c9d1d8;
+    --il-sidewalk: #4a4940;
+    --il-zebra: #e8edf1;
+    --il-label-bg: #0f1720;
+    --il-label-ink: #e6edf3;
+    --il-ped: #f4f7f9;
+    --il-post: #9aa5b0;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+    color-scheme: dark;
+  }
+}
+
 :root[data-theme='dark'] {
   --brand: #3cc3e6;
   --brand-strong: #7fd8ef;
@@ -199,7 +240,7 @@ a {
 
 .site-header {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 20;
   background: color-mix(in srgb, var(--surface) 92%, transparent);
   backdrop-filter: saturate(1.4) blur(10px);
@@ -1619,6 +1660,54 @@ details p {
 }
 .prose li {
   margin-bottom: 8px;
+}
+
+/* ------------------------------------------------------------------ Модальные окна */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: color-mix(in srgb, var(--road) 55%, transparent);
+}
+.modal {
+  width: min(520px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 22px;
+}
+.modal h2 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+.modal-actions,
+.modal-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+.modal-tools {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+.export-box {
+  width: 100%;
+  font: 0.85rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  resize: vertical;
+}
+.btn-danger-solid {
+  background: var(--bad);
+  color: var(--surface);
 }
 
 /* ------------------------------------------------------------------ Подвал и уведомления */

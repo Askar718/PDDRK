@@ -173,6 +173,13 @@ const STRINGS = {
     'common.notFound': 'Страница не найдена',
     'common.toHome': 'На главную',
     'common.questions': 'вопр.',
+    'common.cancel': 'Отмена',
+    'common.confirm': 'Подтвердить',
+    'progress.exportTitle': 'Резервная копия прогресса',
+    'progress.exportHint': 'Скопируйте текст и сохраните его в файл .json. Позже его можно загрузить кнопкой «Загрузить прогресс».',
+    'progress.copy': 'Копировать',
+    'progress.copied': 'Скопировано',
+    'progress.download': 'Скачать файл',
   },
   kk: {
     'app.name': 'ЖҚЕ Қазақстан — оқу тренажері',
@@ -345,6 +352,13 @@ const STRINGS = {
     'common.notFound': 'Бет табылмады',
     'common.toHome': 'Басты бетке',
     'common.questions': 'сұрақ',
+    'common.cancel': 'Болдырмау',
+    'common.confirm': 'Растау',
+    'progress.exportTitle': 'Прогрестің сақтық көшірмесі',
+    'progress.exportHint': 'Мәтінді көшіріп, .json файлына сақтаңыз. Кейін оны «Прогресті жүктеу» батырмасымен жүктеуге болады.',
+    'progress.copy': 'Көшіру',
+    'progress.copied': 'Көшірілді',
+    'progress.download': 'Файлды жүктеп алу',
   },
 };
 

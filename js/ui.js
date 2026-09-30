@@ -61,6 +61,60 @@ export function icon(name, { size = 22, filled = false, label = '' } = {}) {
 
 export const pct = (ratio) => (ratio === null || ratio === undefined ? '—' : `${Math.round(ratio * 100)}%`);
 
+/**
+ * Модальное окно внутри страницы (вместо window.confirm, который блокируется
+ * во встроенных окнах). Возвращает Promise<boolean>.
+ */
+export function modal({ title, body = '', confirmLabel, cancelLabel, danger = false, content = '' }) {
+  return new Promise((resolve) => {
+    const prevFocus = document.activeElement;
+    const wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.innerHTML = `<div class="modal card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title">${esc(title)}</h2>
+      ${body ? `<p>${esc(body)}</p>` : ''}${content}
+      <div class="modal-actions">
+        ${cancelLabel ? `<button type="button" class="btn btn-secondary" data-modal="cancel">${esc(cancelLabel)}</button>` : ''}
+        ${confirmLabel ? `<button type="button" class="btn ${danger ? 'btn-danger-solid' : 'btn-primary'}" data-modal="ok">${esc(confirmLabel)}</button>` : ''}
+      </div></div>`;
+    const close = (result) => {
+      document.removeEventListener('keydown', onKey, true);
+      wrap.remove();
+      prevFocus?.focus?.();
+      resolve(result);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        close(false);
+      } else if (e.key === 'Tab') {
+        const items = [...wrap.querySelectorAll('button, textarea, a[href], input')];
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      } else {
+        // Не даём клавишам доходить до обработчиков страницы (например, 1–4 в тесте).
+        e.stopPropagation();
+      }
+    };
+    wrap.addEventListener('click', (e) => {
+      if (e.target === wrap) return close(false);
+      const act = e.target.closest('[data-modal]')?.dataset.modal;
+      if (act) close(act === 'ok');
+    });
+    document.addEventListener('keydown', onKey, true);
+    document.body.append(wrap);
+    (wrap.querySelector('[data-modal="ok"]') || wrap.querySelector('button')).focus();
+  });
+}
+
 /** Короткое всплывающее уведомление (озвучивается скринридерами). */
 export function toast(message) {
   const host = document.getElementById('toast');

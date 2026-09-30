@@ -1,5 +1,5 @@
 import { t, tr, formatDate, formatDuration } from '../i18n.js';
-import { icon, esc, pct, toast } from '../ui.js';
+import { icon, esc, pct, toast, modal } from '../ui.js';
 import { summarize, recommendations } from '../analytics.js';
 import { modeTitle } from './tests.js';
 
@@ -109,14 +109,39 @@ export function progressView({ data, store, rerender }) {
       </section>`,
     mount(root) {
       root.querySelector('[data-action="export"]').addEventListener('click', () => {
-        const blob = new Blob([store.exportJson()], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `pdd-kz-progress-${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.append(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        const json = store.exportJson();
+        const name = `pdd-kz-progress-${new Date().toISOString().slice(0, 10)}.json`;
+        // Показываем копию в окне: скачивание файлов блокируется во встроенных окнах.
+        modal({
+          title: t('progress.exportTitle'),
+          body: t('progress.exportHint'),
+          cancelLabel: t('common.close'),
+          content: `<label for="export-json" class="visually-hidden">JSON</label>
+            <textarea id="export-json" class="export-box" readonly rows="8">${esc(json)}</textarea>
+            <div class="modal-tools">
+              <button type="button" class="btn btn-primary btn-sm" id="export-copy">${icon('check', { size: 16 })}${t('progress.copy')}</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="export-download">${icon('download', { size: 16 })}${t('progress.download')}</button>
+            </div>`,
+        });
+        const box = document.getElementById('export-json');
+        document.getElementById('export-copy').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(json);
+            toast(t('progress.copied'));
+          } catch {
+            box.focus();
+            box.select();
+          }
+        });
+        document.getElementById('export-download').addEventListener('click', () => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+          a.download = name;
+          document.body.append(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        });
       });
       root.querySelector('[data-action="import"]').addEventListener('change', async (e) => {
         const file = e.target.files?.[0];
@@ -129,8 +154,9 @@ export function progressView({ data, store, rerender }) {
           toast(t('progress.importFail'));
         }
       });
-      root.querySelector('[data-action="reset"]').addEventListener('click', () => {
-        if (!confirm(t('progress.resetConfirm'))) return;
+      root.querySelector('[data-action="reset"]').addEventListener('click', async () => {
+        const ok = await modal({ title: t('progress.reset'), body: t('progress.resetConfirm'), confirmLabel: t('progress.reset'), cancelLabel: t('common.cancel'), danger: true });
+        if (!ok) return;
         store.reset();
         rerender();
       });
