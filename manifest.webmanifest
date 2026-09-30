@@ -1,0 +1,9 @@
+{
+  "name": "ПДД Казахстан — учебный тренажёр",
+  "short_name": "ПДД РК",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f8fa",
+  "theme_color": "#0a7fa4",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
